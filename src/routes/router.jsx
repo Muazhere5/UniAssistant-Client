@@ -1,7 +1,7 @@
 import { createBrowserRouter, Outlet } from "react-router-dom";
-import App from "../App";
 
 /* Layouts */
+import PublicLayout from "../layouts/PublicLayout";
 import AuthLayout from "../layouts/AuthLayout";
 import DashboardLayout from "../layouts/DashboardLayout";
 import AttendenceSheetLayout from "../layouts/AttendenceSheetLayout";
@@ -60,10 +60,10 @@ import Edit from "../pages/admin/Edit";
 import CoursesLecturesAttendence from "../pages/admin/CoursesLecturesAttendence";
 
 const router = createBrowserRouter([
-  /* 🌐 Public Layout */
+  /* 🌐 Public Pages (WITH Background Video) */
   {
     path: "/",
-    element: <App />,
+    element: <PublicLayout />,
     errorElement: <ErrorPage />,
     children: [
       { index: true, element: <Home /> },
@@ -73,7 +73,7 @@ const router = createBrowserRouter([
     ],
   },
 
-  /* 🔐 Auth Pages */
+  /* 🔐 Auth Pages (NO video) */
   {
     path: "/",
     element: <AuthLayout />,
@@ -98,7 +98,7 @@ const router = createBrowserRouter([
     ],
   },
 
-  /* 📊 Dashboard */
+  /* 📊 Dashboard (NO video) */
   {
     path: "/dashboard",
     element: (
@@ -107,7 +107,6 @@ const router = createBrowserRouter([
       </PrivateRoute>
     ),
     children: [
-      /* 🎓 Student */
       {
         path: "student",
         element: (
@@ -125,7 +124,6 @@ const router = createBrowserRouter([
         ],
       },
 
-      /* 🧑‍🏫 Teacher */
       {
         path: "teacher",
         element: (
@@ -149,7 +147,6 @@ const router = createBrowserRouter([
         ],
       },
 
-      /* 🎓 Alumni */
       {
         path: "alumni",
         element: (
@@ -163,7 +160,6 @@ const router = createBrowserRouter([
         ],
       },
 
-      /* 👑 Admin */
       {
         path: "admin",
         element: (
