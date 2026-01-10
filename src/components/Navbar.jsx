@@ -57,7 +57,7 @@ const Navbar = () => {
             </button>
 
             <NavLink to="/apply/student" className={navLinkClass}>
-              Student
+              Student Registration
             </NavLink>
 
             <NavLink to="/notices" className={navLinkClass}>
