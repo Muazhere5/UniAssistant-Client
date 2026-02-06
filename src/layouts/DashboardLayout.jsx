@@ -1,18 +1,22 @@
-import { NavLink, Outlet, useNavigate } from "react-router-dom";
+import { NavLink, Outlet, useNavigate, useLocation } from "react-router-dom";
 import { FiLogOut, FiArrowLeft } from "react-icons/fi";
 import useAuth from "../hooks/useAuth";
-import useRole from "../hooks/useRole";
 
 const DashboardLayout = () => {
   const navigate = useNavigate();
-  const { logOut } = useAuth();
-  const { role } = useRole();
+  const location = useLocation();
+  const { logout } = useAuth();
 
-  /* 🔐 ROLE DECISION (IMPORTANT) */
-  const effectiveRole =
-    role === "admin" || role === "user" ? "admin" : role;
+  /* 🔍 Detect dashboard type from URL */
+  const path = location.pathname;
 
-  /* 📌 SIDEBAR LINKS BY ROLE */
+  let currentDashboard = null;
+  if (path.startsWith("/dashboard/student")) currentDashboard = "student";
+  else if (path.startsWith("/dashboard/teacher")) currentDashboard = "teacher";
+  else if (path.startsWith("/dashboard/alumni")) currentDashboard = "alumni";
+  else if (path.startsWith("/dashboard/admin")) currentDashboard = "admin";
+
+  /* 📚 Sidebar links by dashboard */
   const sidebarLinks = {
     student: [
       { name: "Dashboard", to: "/dashboard/student" },
@@ -48,20 +52,23 @@ const DashboardLayout = () => {
 
   return (
     <div className="min-h-screen flex bg-gray-50">
-      {/* 🔵 SIDEBAR */}
+      {/* 🧭 SIDEBAR */}
       <aside className="w-72 hidden md:flex flex-col bg-gradient-to-b from-sky-100 to-white shadow-xl p-6">
         <h1 className="text-2xl font-extrabold text-sky-600 mb-8">
-          Dashboard
+          {currentDashboard
+            ? `${currentDashboard.charAt(0).toUpperCase()}${currentDashboard.slice(
+                1
+              )} Dashboard`
+            : "Dashboard"}
         </h1>
 
         <nav className="flex-1 space-y-2">
-          {sidebarLinks[effectiveRole]?.map((link) => (
+          {sidebarLinks[currentDashboard]?.map((link) => (
             <NavLink
               key={link.to}
               to={link.to}
               className={({ isActive }) =>
-                `block px-4 py-3 rounded-xl font-semibold transition
-                ${
+                `block px-4 py-3 rounded-xl font-semibold transition ${
                   isActive
                     ? "bg-sky-500 text-white shadow-md"
                     : "text-gray-700 hover:bg-sky-100"
@@ -73,17 +80,17 @@ const DashboardLayout = () => {
           ))}
         </nav>
 
-        {/* ⬅ GO HOME */}
+        {/* ⬅ HOME */}
         <button
           onClick={() => navigate("/")}
-          className="flex items-center gap-2 mt-6 text-sky-600 font-semibold hover:underline"
+          className="flex items-center gap-2 mt-4 text-sky-600 font-semibold hover:underline"
         >
           <FiArrowLeft /> Go Back To Home
         </button>
 
         {/* 🔴 LOGOUT */}
         <button
-          onClick={logOut}
+          onClick={logout}
           className="mt-4 bg-red-500 hover:bg-black text-white py-3 rounded-xl font-bold transition"
         >
           <FiLogOut className="inline mr-2" />
@@ -91,7 +98,7 @@ const DashboardLayout = () => {
         </button>
       </aside>
 
-      {/* 📄 MAIN CONTENT */}
+      {/* 📦 CONTENT */}
       <main className="flex-1 p-4 md:p-10 overflow-y-auto">
         <Outlet />
       </main>

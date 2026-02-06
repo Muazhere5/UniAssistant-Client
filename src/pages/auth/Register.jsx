@@ -6,20 +6,49 @@ import { useNavigate } from "react-router-dom";
 const Register = () => {
   const { registerUser, googleLogin } = useAuth();
   const navigate = useNavigate();
-  const { register, handleSubmit, reset } = useForm();
+
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm();
 
   const onSubmit = async (data) => {
-    const imageFile = data.image[0];
-    const formData = new FormData();
-    formData.append("image", imageFile);
+    try {
+      // ✅ Trim & validate email
+      const email = data.email.trim();
+      const password = data.password;
 
-    const url = `https://api.imgbb.com/1/upload?key=${import.meta.env.VITE_IMGBB_API_KEY}`;
-    const res = await fetch(url, { method: "POST", body: formData });
-    const imgData = await res.json();
+      if (!email || !email.includes("@")) {
+        throw new Error("Invalid email address");
+      }
 
-    await registerUser(data.email, data.password);
-    reset();
-    navigate("/");
+      // 1️⃣ Image upload (kept as-is)
+      const imageFile = data.image[0];
+      const formData = new FormData();
+      formData.append("image", imageFile);
+
+      const url = `https://api.imgbb.com/1/upload?key=${import.meta.env.VITE_IMGBB_API_KEY}`;
+      await fetch(url, { method: "POST", body: formData });
+
+      // 2️⃣ Firebase Registration (ONLY)
+      await registerUser(email, password);
+
+      reset();
+      navigate("/");
+    } catch (error) {
+      console.error("Registration failed:", error.message);
+    }
+  };
+
+  const handleGoogleLogin = async () => {
+    try {
+      await googleLogin();
+      navigate("/");
+    } catch (error) {
+      console.error("Google login failed:", error);
+    }
   };
 
   return (
@@ -29,12 +58,42 @@ const Register = () => {
       </h2>
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-        <input {...register("name")} placeholder="Full Name" className="input" />
-        <input {...register("id")} placeholder="University ID" className="input" />
-        <input {...register("department")} placeholder="Department" className="input" />
-        <input type="file" {...register("image")} className="input" />
-        <input {...register("email")} placeholder="Email" className="input" />
-        <input type="password" {...register("password")} placeholder="Password" className="input" />
+        <input
+          {...register("name", { required: true })}
+          placeholder="Full Name"
+          className="input"
+        />
+
+        <input
+          {...register("id", { required: true })}
+          placeholder="University ID"
+          className="input"
+        />
+
+        <input
+          {...register("department", { required: true })}
+          placeholder="Department"
+          className="input"
+        />
+
+        <input
+          type="file"
+          {...register("image", { required: true })}
+          className="input"
+        />
+
+        <input
+          {...register("email", { required: true })}
+          placeholder="Email"
+          className="input"
+        />
+
+        <input
+          type="password"
+          {...register("password", { required: true, minLength: 6 })}
+          placeholder="Password"
+          className="input"
+        />
 
         <button className="w-full bg-sky-500 text-white py-3 rounded-xl hover:bg-black transition">
           Register
@@ -42,7 +101,7 @@ const Register = () => {
       </form>
 
       <button
-        onClick={googleLogin}
+        onClick={handleGoogleLogin}
         className="mt-4 w-full flex items-center justify-center gap-2 border border-sky-500 text-sky-500 py-3 rounded-xl hover:bg-black hover:text-white transition"
       >
         <FaGoogle /> Continue with Google

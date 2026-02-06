@@ -9,6 +9,7 @@ import {
   onAuthStateChanged,
 } from "firebase/auth";
 import { auth } from "../firebase/firebase.config";
+import axios from "axios";
 
 const googleProvider = new GoogleAuthProvider();
 
@@ -16,16 +17,37 @@ const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  const registerUser = (email, password) =>
-    createUserWithEmailAndPassword(auth, email, password);
+  const saveUserToDB = async (email, name) => {
+    await axios.post("http://localhost:5000/users", {
+      email,
+      name,
+    });
+  };
+
+  const registerUser = async (email, password) => {
+    const result = await createUserWithEmailAndPassword(auth, email, password);
+
+    // ✅ Save ONLY once, from Firebase user
+    await saveUserToDB(result.user.email, result.user.displayName || "User");
+
+    return result;
+  };
 
   const loginUser = (email, password) =>
     signInWithEmailAndPassword(auth, email, password);
 
-  const googleLogin = () =>
-    signInWithPopup(auth, googleProvider);
+  const googleLogin = async () => {
+    const result = await signInWithPopup(auth, googleProvider);
 
-  const logout = () => signOut(auth);
+    await saveUserToDB(result.user.email, result.user.displayName || "User");
+
+    return result;
+  };
+
+  const logout = async () => {
+    setUser(null);
+    await signOut(auth);
+  };
 
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, (currentUser) => {
@@ -35,17 +57,17 @@ const AuthProvider = ({ children }) => {
     return () => unsub();
   }, []);
 
-  const value = {
-    user,
-    loading,
-    registerUser,
-    loginUser,
-    googleLogin,
-    logout,
-  };
-
   return (
-    <AuthContext.Provider value={value}>
+    <AuthContext.Provider
+      value={{
+        user,
+        loading,
+        registerUser,
+        loginUser,
+        googleLogin,
+        logout,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );

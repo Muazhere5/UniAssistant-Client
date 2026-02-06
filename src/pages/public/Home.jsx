@@ -1,214 +1,299 @@
 // src/pages/public/Home.jsx
 import { Link } from "react-router-dom";
-import { useEffect, useState } from "react";
-import Slider from "../../components/Slider";
+import { useState, useEffect } from "react";
 
-/* Assets for Academic Journey */
-import dpt1 from "../../assets/dptpic1.png"; // Academic image
-import dpt2 from "../../assets/dptpic2.png";
-import dpt3 from "../../assets/dptpic3.png";
-import dpt4 from "../../assets/dptpic4.png";
-import dpt5 from "../../assets/dptpic5.png";
+/* ===================== SECTION 1: Swiper Slider Images ===================== */
+import slide1 from "../../assets/slide1.png";
+import slide2 from "../../assets/slide2.png";
+import slide3 from "../../assets/slide3.png";
+import slide4 from "../../assets/slide4.png";
 
-const researchSlides = [
-  {
-    id: 1,
-    img: "https://images.unsplash.com/photo-1581091012184-5c1fef4c8b23",
-  },
-  {
-    id: 2,
-    img: "https://images.unsplash.com/photo-1531482615713-2afd69097998",
-  },
-  {
-    id: 3,
-    img: "https://images.unsplash.com/photo-1518770660439-4636190af475",
-  },
-  {
-    id: 4,
-    img: "https://images.unsplash.com/photo-1509228627159-6452c8a4d08b",
-  },
-  {
-    id: 5,
-    img: "https://images.unsplash.com/photo-1526378722484-cc5c8106d9cf",
-  },
-];
+/* ===================== SECTION 2: Banner Image ===================== */
+import bannerImg from "../../assets/banner.png";
 
-const quotes = [
-  "Innovation begins with curiosity.",
-  "Technology shapes the future.",
-  "Education is the most powerful weapon.",
-  "Research creates real impact.",
-];
+/* ===================== SECTION 3: Academic Journey Slider ===================== */
+import journey1 from "../../assets/journey1.jpg";
+import journey2 from "../../assets/journey2.jpg";
+import journey3 from "../../assets/journey3.jpg";
 
-const newsTicker = [
-  "Apply as a Student from Apply Section",
-  "Teachers can manage attendance digitally",
-  "View ICE Notices and Bus Schedules",
-  "Alumni can guide student careers",
-];
+/* ===================== SECTION 4: Teacher Join Background ===================== */
+import teacherBg from "../../assets/teacher-bg.png";
 
-const academicImages = [dpt1, dpt2, dpt3, dpt4, dpt5];
+/* ===================== SECTION 5: Teacher Cards Images ===================== */
+import teacher1 from "../../assets/apurba_sir.jpg";
+import teacher2 from "../../assets/nayem_sir.jpg";
+import teacher3 from "../../assets/ashik_sir.jpg";
+
+/* ===================== SECTION 6: Alumni Join Background ===================== */
+import alumniBg from "../../assets/alumni-bg.png";
 
 const Home = () => {
-  const [quoteIndex, setQuoteIndex] = useState(0);
-  const [imageIndex, setImageIndex] = useState(0);
+  const [heroIndex, setHeroIndex] = useState(0);
+  const [journeyIndex, setJourneyIndex] = useState(0);
+  const [teacherIndex, setTeacherIndex] = useState(0);
+  const [faqOpen, setFaqOpen] = useState(null);
 
+  const [heroSlideDir, setHeroSlideDir] = useState("left");
+  const [journeySlideDir, setJourneySlideDir] = useState("right");
+
+  const heroSlides = [slide1, slide2, slide3, slide4];
+  const journeySlides = [journey1, journey2, journey3];
+
+  /* ===================== AUTO HERO SLIDER (RIGHT → LEFT) ===================== */
   useEffect(() => {
-    const q = setInterval(
-      () => setQuoteIndex((prev) => (prev + 1) % quotes.length),
-      3000
-    );
-    const i = setInterval(
-      () => setImageIndex((prev) => (prev + 1) % academicImages.length),
-      3500
-    );
-    return () => {
-      clearInterval(q);
-      clearInterval(i);
-    };
+    const interval = setInterval(() => {
+      setHeroSlideDir("left");
+      setHeroIndex((prev) => (prev + 1) % heroSlides.length);
+    }, 2500);
+
+    return () => clearInterval(interval);
   }, []);
 
+  /* ===================== AUTO JOURNEY SLIDER (LEFT → RIGHT) ===================== */
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setJourneySlideDir("right");
+      setJourneyIndex((prev) => (prev + 1) % journeySlides.length);
+    }, 1800);
+
+    return () => clearInterval(interval);
+  }, []);
+
+  const teachers = [
+    {
+      name: "Apurba Adhikarey",
+      designation: "Associate Professor, ICE",
+      image: teacher1,
+    },
+    {
+      name: "Md. Mahbubul Alam",
+      designation: "Associate Professor, ICE",
+      image: teacher2,
+    },
+    {
+      name: "Dr. Md. Ashikur Rahman Khan",
+      designation: "Professor, ICE",
+      image: teacher3,
+    },
+  ];
+
   return (
-    <div className="space-y-24 pb-24">
+    <div className="space-y-32 pb-32">
 
-      {/* ===================== 1. Research Slider ===================== */}
-      <section className="bg-white/95 max-w-6xl mx-auto p-6 rounded-2xl shadow-lg">
-        <h2 className="text-sky-500 text-3xl font-bold text-center">
-          Research & Projects
-        </h2>
-        <p className="text-black font-semibold text-center mb-6">
-          Discover innovation shaping tomorrow
-        </p>
+      {/* ======================================================
+          SECTION 1: HERO AUTO SLIDER
+      ====================================================== */}
+      <section className="relative h-[90vh] w-full overflow-hidden">
+        <img
+          key={heroIndex}
+          src={heroSlides[heroIndex]}
+          alt="Innovation Slide"
+          className={`absolute inset-0 w-full h-full object-cover transition-transform duration-700 ease-in-out ${
+            heroSlideDir === "left"
+              ? "translate-x-0 animate-[slideLeft_.7s_ease-in-out]"
+              : ""
+          }`}
+          style={{
+            transform: "translateX(0)",
+          }}
+        />
 
-        <div className="relative h-[400px] overflow-hidden rounded-xl">
-          {researchSlides.map((slide, idx) => (
-            <img
-              key={slide.id}
-              src={slide.img}
-              alt="Research"
-              className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ${
-                idx === imageIndex ? "opacity-100" : "opacity-0"
-              }`}
-            />
-          ))}
+        <div className="absolute inset-0 bg-black/50 flex flex-col items-center justify-center text-center px-4 z-10">
+          <h1 className="text-white text-4xl md:text-6xl font-bold mb-6">
+            Welcome to UniAssistant AI
+          </h1>
 
           <Link
             to="/projects"
-            className="absolute inset-0 flex items-center justify-center"
+            className="bg-white text-black px-10 py-4 rounded-full font-bold text-lg hover:bg-sky-400 hover:text-white transition"
           >
-            <button className="bg-sky-500 text-white px-10 py-4 rounded-full text-xl font-bold hover:bg-black transition">
-              Watch Innovations
-            </button>
+            Explore Innovation
           </Link>
         </div>
       </section>
 
-      {/* ===================== 2. Hero Section ===================== */}
-      <section className="relative h-[500px] flex items-center justify-center">
-        {/* Banner Image */}
+      {/* ======================================================
+          SECTION 2: BANNER IMAGE WITH TITLE
+      ====================================================== */}
+      <section className="relative max-w-7xl mx-auto px-4">
         <img
-          src="https://i.postimg.cc/YOUR-BANNER.png" // <-- PUT POSTIMAGES LINK HERE
-          alt="Banner"
-          className="w-[70%] mx-auto z-10"
+          src={bannerImg}
+          alt="University Banner"
+          className="w-full h-[90vh] object-cover rounded-3xl"
         />
 
-        {/* Floating Quote */}
-        <div className="absolute top-10 text-2xl font-bold text-yellow-400 animate-fade">
-          {quotes[quoteIndex]}
-        </div>
-
-        {/* Title + News */}
-        <div className="absolute bottom-10 bg-white/95 px-6 py-4 rounded-xl shadow-md w-[80%]">
-          <h2 className="text-sky-500 text-2xl font-bold text-center">
-            Uni Assistant AI
-          </h2>
-          <marquee className="italic text-black mt-2">
-            {newsTicker.join(" • ")}
-          </marquee>
-        </div>
+        <h2 className="absolute -top-20 left-1/2 -translate-x-1/2 text-sky-400 text-4xl font-extrabold">
+          UniAssistant AI
+        </h2>
       </section>
 
-      {/* ===================== 3. Apply as Teacher ===================== */}
-      <section className="bg-white/95 max-w-6xl mx-auto p-8 rounded-2xl shadow-lg">
-        <h2 className="text-sky-500 text-3xl font-bold text-center mb-6">
-          Join as a Teacher
+      {/* ======================================================
+          SECTION 3: ACADEMIC JOURNEY AUTO SLIDER
+      ====================================================== */}
+      <section className="max-w-7xl mx-auto px-4 space-y-8">
+        <h2 className="text-center text-sky-400 text-4xl font-bold">
+          Academic Journey Of ICE
         </h2>
-        <div className="grid md:grid-cols-2 gap-8 items-center">
+
+        <div className="relative h-[90vh] overflow-hidden rounded-3xl">
           <img
-            src="https://i.postimg.cc/YOUR-TEACHER.png" // <-- Teacher Image
-            alt="Teacher"
-            className="rounded-xl"
-          />
-          <div>
-            <p className="text-black mb-6">
-              Empower students, manage courses, and lead academic innovation.
-            </p>
-            <Link to="/apply/teacher">
-              <button className="bg-sky-500 text-white px-8 py-4 rounded-xl font-bold hover:bg-black transition">
-                Register As A Teacher
-              </button>
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      {/* ===================== 4. Our Teachers ===================== */}
-      <section className="space-y-8">
-        <div className="bg-white/95 max-w-xl mx-auto p-4 rounded-xl shadow">
-          <h2 className="text-sky-500 text-3xl font-bold text-center">
-            Our Teachers
-          </h2>
-        </div>
-        <Slider />
-      </section>
-
-      {/* ===================== 5. Academic Journey ===================== */}
-      <section className="bg-white/95 max-w-6xl mx-auto p-8 rounded-2xl shadow-lg text-center">
-        <h2 className="text-sky-500 text-3xl font-bold mb-6">
-          Academic Journey of ICE
-        </h2>
-        <img
-          src={academicImages[imageIndex]}
-          alt="ICE Journey"
-          className="mx-auto rounded-xl transition-all duration-1000 w-[70%]"
-        />
-      </section>
-
-      {/* ===================== 6. Apply as Alumni ===================== */}
-      <section className="bg-white/95 max-w-6xl mx-auto p-8 rounded-2xl shadow-lg">
-        <h2 className="text-sky-500 text-3xl font-bold text-center mb-6">
-          Join as an Alumni
-        </h2>
-        <div className="grid md:grid-cols-2 gap-8 items-center">
-          <div>
-            <p className="text-black mb-6">
-              Share experience, mentor students, and strengthen ICE community.
-            </p>
-            <Link to="/apply/alumni">
-              <button className="bg-sky-500 text-white px-8 py-4 rounded-xl font-bold hover:bg-black transition">
-                Register As An Alumni
-              </button>
-            </Link>
-          </div>
-          <img
-            src="https://i.postimg.cc/YOUR-ALUMNI.png" // <-- Alumni Image
-            alt="Alumni"
-            className="rounded-xl"
+            key={journeyIndex}
+            src={journeySlides[journeyIndex]}
+            alt="Academic Journey"
+            className={`absolute inset-0 w-full h-full object-cover transition-transform duration-500 ease-in-out ${
+              journeySlideDir === "right"
+                ? "translate-x-0 animate-[slideRight_.6s_ease-in-out]"
+                : ""
+            }`}
+            style={{
+              transform: "translateX(0)",
+            }}
           />
         </div>
       </section>
 
-      {/* ===================== 7. Creative Academic Section ===================== */}
-      <section className="bg-white/95 max-w-6xl mx-auto p-8 rounded-2xl shadow-lg">
-        <h2 className="text-sky-500 text-3xl font-bold text-center mb-6">
-          Academic Support & FAQ
-        </h2>
-        <ul className="space-y-4 text-black">
-          <li>📘 How attendance is calculated transparently</li>
-          <li>📊 How teachers manage class schedules</li>
-          <li>🎓 How alumni help student careers</li>
-        </ul>
+      {/* ======================================================
+          SECTION 4: JOIN AS TEACHER
+      ====================================================== */}
+      <section
+        className="relative h-[80vh] bg-cover bg-center"
+        style={{ backgroundImage: `url(${teacherBg})` }}
+      >
+        <div className="absolute inset-0 bg-black/60" />
+
+        <div className="relative z-10 h-full flex flex-col items-center justify-center text-center px-4 space-y-6">
+          <h2 className="text-sky-400 text-4xl font-bold">
+            Join As A Teacher
+          </h2>
+
+          <p className="text-white max-w-2xl">
+            Empower students, manage academics digitally, and contribute to the
+            ICE department with transparency and impact.
+          </p>
+
+          <Link
+            to="/apply/teacher"
+            className="bg-white text-black px-10 py-4 rounded-full font-bold hover:bg-sky-400 hover:text-white transition"
+          >
+            Apply As A Teacher
+          </Link>
+        </div>
       </section>
+
+      {/* ======================================================
+          SECTION 5: OUR TEACHERS
+      ====================================================== */}
+      <section className="max-w-7xl mx-auto px-4 space-y-10">
+        <h2 className="text-center text-sky-400 text-4xl font-bold">
+          Our Teachers
+        </h2>
+
+        <div className="relative flex items-center justify-center gap-6">
+          <button
+            onClick={() =>
+              setTeacherIndex(
+                (teacherIndex - 1 + teachers.length) % teachers.length
+              )
+            }
+            className="bg-sky-400 text-white px-4 py-3 rounded-full hover:bg-black transition"
+          >
+            ◀
+          </button>
+
+          <div className="bg-white shadow-xl rounded-3xl p-6 w-72 text-center">
+            <img
+              src={teachers[teacherIndex].image}
+              alt="Teacher"
+              className="w-32 h-32 mx-auto rounded-full object-cover mb-4"
+            />
+            <h3 className="font-bold text-lg">
+              {teachers[teacherIndex].name}
+            </h3>
+            <p className="text-gray-600">
+              {teachers[teacherIndex].designation}
+            </p>
+          </div>
+
+          <button
+            onClick={() => setTeacherIndex((teacherIndex + 1) % teachers.length)}
+            className="bg-sky-400 text-white px-4 py-3 rounded-full hover:bg-black transition"
+          >
+            ▶
+          </button>
+        </div>
+      </section>
+
+      {/* ======================================================
+          SECTION 6: JOIN AS ALUMNI
+      ====================================================== */}
+      <section
+        className="relative h-[80vh] bg-cover bg-center"
+        style={{ backgroundImage: `url(${alumniBg})` }}
+      >
+        <div className="absolute inset-0 bg-black/60" />
+
+        <div className="relative z-10 h-full flex flex-col items-center justify-center text-center px-4 space-y-6">
+          <h2 className="text-sky-400 text-4xl font-bold">
+            Join As Alumni
+          </h2>
+
+          <p className="text-white max-w-2xl">
+            Connect with students, share your journey, and help shape future
+            ICE professionals.
+          </p>
+
+          <Link
+            to="/apply/alumni"
+            className="bg-white text-black px-10 py-4 rounded-full font-bold hover:bg-sky-400 hover:text-white transition"
+          >
+            Apply As An Alumni
+          </Link>
+        </div>
+      </section>
+
+      {/* ======================================================
+          SECTION 7: FAQ
+      ====================================================== */}
+      <section className="max-w-5xl mx-auto px-4 space-y-8">
+        <h2 className="text-center text-sky-400 text-4xl font-bold">
+          FAQ About UniAssistant AI
+        </h2>
+
+        {[
+          {
+            q: "What Are The Automated Features In This Assistant?",
+            a: "UniAssistant AI provides smart classroom booking, automated attendance tracking, AI-powered CV generation, and academic assistance tools that help ICE students manage their university life efficiently.",
+          },
+          {
+            q: "Who Can Get Access Of Contact With Alumni?",
+            a: "Only registered students of the ICE department will be able to communicate and collaborate with alumni through the UniAssistant AI platform.",
+          },
+          {
+            q: "How To Sign Up As A Student?",
+            a: "Students need to complete the official student application form available on the platform to get verified access to UniAssistant AI services.",
+          },
+          {
+            q: "AI Chatbot Speciality",
+            a: "The UniAssistant AI chatbot is trained specially to answer ICE-related academic questions, departmental queries, and student guidance topics.",
+          },
+        ].map((item, index) => (
+          <div
+            key={index}
+            className="border rounded-2xl p-6 cursor-pointer"
+            onClick={() => setFaqOpen(faqOpen === index ? null : index)}
+          >
+            <h3 className="font-bold text-lg flex justify-between">
+              {item.q}
+              <span>{faqOpen === index ? "−" : "+"}</span>
+            </h3>
+
+            {faqOpen === index && (
+              <p className="mt-4 text-gray-600">{item.a}</p>
+            )}
+          </div>
+        ))}
+      </section>
+
     </div>
   );
 };

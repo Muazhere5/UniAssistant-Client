@@ -1,7 +1,8 @@
+// src/routes/router.jsx
 import { createBrowserRouter, Outlet } from "react-router-dom";
+import App from "../App";
 
 /* Layouts */
-import PublicLayout from "../layouts/PublicLayout";
 import AuthLayout from "../layouts/AuthLayout";
 import DashboardLayout from "../layouts/DashboardLayout";
 import AttendenceSheetLayout from "../layouts/AttendenceSheetLayout";
@@ -60,10 +61,9 @@ import Edit from "../pages/admin/Edit";
 import CoursesLecturesAttendence from "../pages/admin/CoursesLecturesAttendence";
 
 const router = createBrowserRouter([
-  /* 🌐 Public Pages (WITH Background Video) */
   {
     path: "/",
-    element: <PublicLayout />,
+    element: <App />,
     errorElement: <ErrorPage />,
     children: [
       { index: true, element: <Home /> },
@@ -73,7 +73,6 @@ const router = createBrowserRouter([
     ],
   },
 
-  /* 🔐 Auth Pages (NO video) */
   {
     path: "/",
     element: <AuthLayout />,
@@ -83,7 +82,6 @@ const router = createBrowserRouter([
     ],
   },
 
-  /* 📝 Role Applications */
   {
     path: "/apply",
     element: (
@@ -98,7 +96,6 @@ const router = createBrowserRouter([
     ],
   },
 
-  /* 📊 Dashboard (NO video) */
   {
     path: "/dashboard",
     element: (
@@ -111,10 +108,11 @@ const router = createBrowserRouter([
         path: "student",
         element: (
           <StudentRoute>
-            <SDashboard />
+            <Outlet />
           </StudentRoute>
         ),
         children: [
+          { index: true, element: <SDashboard /> },
           { path: "attendance", element: <Attendance /> },
           { path: "lectures", element: <Lectures /> },
           { path: "routine", element: <Routine /> },
@@ -128,10 +126,11 @@ const router = createBrowserRouter([
         path: "teacher",
         element: (
           <TeacherRoute>
-            <TDashboard />
+            <Outlet />
           </TeacherRoute>
         ),
         children: [
+          { index: true, element: <TDashboard /> },
           {
             path: "attendance",
             element: (
@@ -151,10 +150,11 @@ const router = createBrowserRouter([
         path: "alumni",
         element: (
           <AlumniRoute>
-            <AlDashboard />
+            <Outlet />
           </AlumniRoute>
         ),
         children: [
+          { index: true, element: <AlDashboard /> },
           { path: "profile", element: <Profile /> },
           { path: "career", element: <Career /> },
         ],
@@ -164,10 +164,11 @@ const router = createBrowserRouter([
         path: "admin",
         element: (
           <AdminRoute>
-            <AdDashboard />
+            <Outlet />
           </AdminRoute>
         ),
         children: [
+          { index: true, element: <AdDashboard /> },
           { path: "student-requests", element: <SRequest /> },
           { path: "teacher-requests", element: <TRequest /> },
           { path: "alumni-requests", element: <AlRequest /> },

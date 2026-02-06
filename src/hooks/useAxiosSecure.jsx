@@ -1,8 +1,6 @@
 import { useEffect } from "react";
 import axios from "axios";
 import { getAuth } from "firebase/auth";
-import useAuth from "./useAuth";
-import { useNavigate } from "react-router-dom";
 
 /**
  * Secure Axios instance
@@ -15,16 +13,14 @@ const axiosSecure = axios.create({
 });
 
 const useAxiosSecure = () => {
-  const { logout } = useAuth();
-  const navigate = useNavigate();
   const auth = getAuth();
 
   useEffect(() => {
-    // 🔐 Request interceptor → attach token
     const requestInterceptor = axiosSecure.interceptors.request.use(
       async (config) => {
         const currentUser = auth.currentUser;
 
+        // ✅ Only attach token if available
         if (currentUser) {
           const token = await currentUser.getIdToken();
           config.headers.authorization = `Bearer ${token}`;
@@ -35,27 +31,19 @@ const useAxiosSecure = () => {
       (error) => Promise.reject(error)
     );
 
-    // 🚫 Response interceptor → handle auth errors
     const responseInterceptor = axiosSecure.interceptors.response.use(
       (res) => res,
-      async (error) => {
-        const status = error.response?.status;
-
-        if (status === 401 || status === 403) {
-          await logout();
-          navigate("/login");
-        }
-
+      (error) => {
+        // ❗ DO NOT force logout here
         return Promise.reject(error);
       }
     );
 
-    // 🧹 Cleanup interceptors
     return () => {
       axiosSecure.interceptors.request.eject(requestInterceptor);
       axiosSecure.interceptors.response.eject(responseInterceptor);
     };
-  }, [auth, logout, navigate]);
+  }, [auth]);
 
   return axiosSecure;
 };

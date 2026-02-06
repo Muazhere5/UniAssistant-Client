@@ -1,7 +1,6 @@
 import { Outlet, useLocation } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
-import BackgroundVideo from "./pages/public/BackgroundVideo";
 
 const App = () => {
   const location = useLocation();
@@ -13,9 +12,6 @@ const App = () => {
 
   return (
     <>
-      {/* Global Background Video */}
-      <BackgroundVideo />
-
       {/* Navbar */}
       {!hideLayout && <Navbar />}
 

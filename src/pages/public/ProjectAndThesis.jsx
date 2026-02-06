@@ -8,44 +8,29 @@ import {
 
 const Section = ({ title, data }) => {
   const [query, setQuery] = useState("");
-  const [limit, setLimit] = useState(6);
 
   const filtered = data.filter((item) =>
     item.title.toLowerCase().includes(query.toLowerCase())
   );
 
   return (
-    <section className="bg-white/95 max-w-7xl mx-auto p-8 rounded-2xl shadow-xl mb-24">
-      <h2 className="text-sky-500 text-3xl font-bold text-center mb-6">
-        {title}
-      </h2>
+    <section className="max-w-7xl mx-auto mb-24 px-4">
+      <h2 className="text-3xl font-bold text-sky-500 mb-6">{title}</h2>
 
       <input
-        type="text"
-        placeholder="Search..."
-        className="w-full mb-6 p-3 rounded-xl border"
+        className="w-full border border-gray-400 p-3 mb-6 text-black"
+        placeholder={`Search ${title}`}
         onChange={(e) => setQuery(e.target.value)}
       />
 
-      <ProjectThesisGrid data={filtered.slice(0, limit)} />
-
-      {limit < filtered.length && (
-        <div className="text-center mt-10">
-          <button
-            onClick={() => setLimit(limit + 3)}
-            className="bg-sky-500 text-white px-8 py-3 rounded-xl font-bold hover:bg-black transition"
-          >
-            See More
-          </button>
-        </div>
-      )}
+      <ProjectThesisGrid data={filtered} />
     </section>
   );
 };
 
 const ProjectAndThesis = () => {
   return (
-    <div className="pt-24">
+    <div className="min-h-screen bg-gray-50 pt-24">
       <Section title="Projects" data={projects} />
       <Section title="Thesis" data={thesis} />
     </div>

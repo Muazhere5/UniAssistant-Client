@@ -5,8 +5,8 @@ import useRole from "../hooks/useRole";
 import logo from "../assets/Logo.png";
 
 const Navbar = () => {
-  const { user, logOut } = useAuth();
-  const { role } = useRole();
+  const { user, logout } = useAuth();
+  const { role, roleLoading } = useRole();
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
 
@@ -16,10 +16,24 @@ const Navbar = () => {
       return;
     }
 
-    if (role === "student") navigate("/dashboard/student");
-    else if (role === "teacher") navigate("/dashboard/teacher");
-    else if (role === "alumni") navigate("/dashboard/alumni");
-    else if (role === "admin") navigate("/dashboard/admin");
+    if (roleLoading) return;
+
+    // ✅ TEMP FIX: "user" goes to student dashboard
+    if (role === "student" || role === "user") {
+      navigate("/dashboard/student");
+    } else if (role === "teacher") {
+      navigate("/dashboard/teacher");
+    } else if (role === "alumni") {
+      navigate("/dashboard/alumni");
+    } else if (role === "admin") {
+      navigate("/dashboard/admin");
+    }
+  };
+
+  const handleLogout = async () => {
+    setOpen(false);
+    await logout();
+    navigate("/");
   };
 
   const navLinkClass =
@@ -30,28 +44,21 @@ const Navbar = () => {
       <div className="max-w-7xl mx-auto px-4">
         <div className="flex items-center justify-between h-16">
 
-          {/* LEFT: Logo */}
+          {/* Logo */}
           <Link to="/" className="flex items-center gap-2">
             <img src={logo} alt="ICE Logo" className="h-9 w-9 object-contain" />
-            <span className="text-white text-xl font-bold tracking-wide">
-              ICE
-            </span>
+            <span className="text-white text-xl font-bold">ICE</span>
           </Link>
 
-          {/* CENTER: Nav Links */}
+          {/* Center Nav */}
           <div className="hidden md:flex items-center gap-2">
-            <NavLink to="/" className={navLinkClass}>
-              Home
-            </NavLink>
+            <NavLink to="/" className={navLinkClass}>Home</NavLink>
+            <NavLink to="/projects" className={navLinkClass}>Projects & Theses</NavLink>
 
-            <NavLink to="/projects" className={navLinkClass}>
-              Projects & Theses
-            </NavLink>
-
-            {/* CENTER DASHBOARD BUTTON */}
             <button
               onClick={handleDashboardClick}
-              className="mx-4 px-6 py-2 rounded-xl font-bold text-black bg-white transition-all hover:bg-sky-500 hover:text-white"
+              disabled={roleLoading}
+              className="mx-4 px-6 py-2 rounded-xl font-bold bg-white text-black hover:bg-sky-500 hover:text-white disabled:opacity-50"
             >
               Dashboard
             </button>
@@ -59,40 +66,39 @@ const Navbar = () => {
             <NavLink to="/apply/student" className={navLinkClass}>
               Student Registration
             </NavLink>
-
             <NavLink to="/notices" className={navLinkClass}>
               Notices
             </NavLink>
           </div>
 
-          {/* RIGHT: Profile / Login */}
-          <div className="relative">
+          {/* Auth */}
+          <div className="relative flex items-center gap-3">
             {!user ? (
-              <Link
-                to="/login"
-                className="bg-sky-500 text-white font-semibold px-4 py-2 rounded-lg transition-all hover:bg-black hover:text-white"
-              >
-                Login
-              </Link>
+              <>
+                <Link to="/login" className="bg-sky-500 px-4 py-2 rounded-lg text-white">
+                  Login
+                </Link>
+                <Link to="/register" className="border border-sky-500 px-4 py-2 rounded-lg text-sky-500">
+                  Register
+                </Link>
+              </>
             ) : (
               <>
                 <button onClick={() => setOpen(!open)}>
                   <img
-                    src={user?.photoURL || "https://i.ibb.co/2kRZ9J4/user.png"}
-                    alt="Profile"
-                    className="w-10 h-10 rounded-full border-2 border-sky-500 object-cover"
+                    src={user.photoURL || "https://i.ibb.co/2kRZ9J4/user.png"}
+                    className="w-10 h-10 rounded-full border-2 border-sky-500"
                   />
                 </button>
 
                 {open && (
-                  <div className="absolute right-0 mt-3 w-64 bg-black rounded-xl shadow-xl p-4">
-                    <p className="text-white text-sm break-all mb-3">
-                      {user?.email}
+                  <div className="absolute right-0 mt-3 w-64 bg-black p-4 rounded-xl">
+                    <p className="text-white text-sm mb-3 break-all">
+                      {user.email}
                     </p>
-
                     <button
-                      onClick={logOut}
-                      className="w-full bg-sky-500 text-white font-semibold py-2 rounded-lg transition-all hover:bg-black"
+                      onClick={handleLogout}
+                      className="w-full bg-sky-500 py-2 rounded-lg text-white"
                     >
                       Logout
                     </button>

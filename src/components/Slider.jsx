@@ -6,13 +6,13 @@ const teachers = [
     name: "Dr. A. Rahman",
     designation: "Professor, ICE",
     email: "arahman@nstu.edu.bd",
-    image: "https://i.postimg.cc/TEACHER1.png", // <-- POSTIMAGE LINK
+    image: "https://i.postimg.cc/765sYf7S/abid-sir.jpg", // <-- POSTIMAGE LINK
   },
   {
-    name: "Md. Hasan",
+    name: "Md. Mahabubul Alam",
     designation: "Assistant Professor",
     email: "hasan@nstu.edu.bd",
-    image: "https://i.postimg.cc/TEACHER2.png",
+    image: "https://i.postimg.cc/prNZWkPH/nayem-sir.jpg",
   },
   {
     name: "Dr. S. Karim",

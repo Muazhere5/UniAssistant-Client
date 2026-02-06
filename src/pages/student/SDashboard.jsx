@@ -106,6 +106,7 @@ const SDashboard = () => {
         ))}
       </section>
 
+      {/* 🔽 NESTED ROUTES RENDER HERE */}
       <Outlet />
     </div>
   );
